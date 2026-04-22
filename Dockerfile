@@ -83,19 +83,37 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
 
-# Install Playwright's Chromium after node_modules are in place.
-# (The `playwright` package provides the `playwright` CLI bundled in node_modules.)
-RUN npx --yes playwright install chromium --with-deps || npx --yes playwright install chromium
+# Browsers get installed to *shared* paths (not per-user caches) so the final
+# USER node runtime sees the same binaries the build installed. Without this,
+# Playwright and Puppeteer default to $HOME/.cache which is /root at install
+# time and /home/node at runtime — paths diverge, module crashes on boot.
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    PUPPETEER_CACHE_DIR=/puppeteer-cache
 
-# Data directory for SQLite, Playwright user data, WhatsApp auth session, etc.
-RUN mkdir -p /data && chown -R node:node /data
+# Playwright Chromium (used by the Browser module).
+RUN mkdir -p /ms-playwright \
+ && npx --yes playwright install chromium
+
+# Puppeteer's Chrome (used by whatsapp-web.js, which ships puppeteer as a dep).
+# `require.resolve` locates install.mjs whether puppeteer is hoisted to the root
+# node_modules or nested under whatsapp-web.js/. We then exec it with our
+# PUPPETEER_CACHE_DIR so Chrome lands in the shared path the runtime user owns.
+RUN mkdir -p /puppeteer-cache \
+ && node -e "const {execFileSync}=require('child_process'); const p=require.resolve('puppeteer/install.mjs'); execFileSync(process.execPath,[p],{stdio:'inherit'})"
+
+# Data dir + chown of shared browser caches so the non-root runtime user can
+# read them.
+RUN mkdir -p /data \
+ && chown -R node:node /data /ms-playwright /puppeteer-cache
 
 USER node
 
 ENV NODE_ENV=production \
     DATA_DIR=/data \
     PORT=8080 \
-    HOST=0.0.0.0
+    HOST=0.0.0.0 \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    PUPPETEER_CACHE_DIR=/puppeteer-cache
 
 EXPOSE 8080
 
