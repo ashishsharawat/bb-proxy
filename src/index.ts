@@ -24,8 +24,17 @@ async function buildServer(): Promise<{ app: FastifyInstance; cleanup: () => Pro
 
   const db = openDb(path.join(config.dataDir, 'bb-proxy.sqlite'));
 
+  // Pass logger *options* (not the pino instance) so Fastify's generic type
+  // stays at FastifyBaseLogger. We keep a separate pino `logger` for modules
+  // because they're typed against pino's Logger and use .child() features.
+  const isProd = process.env['NODE_ENV'] === 'production';
   const app = Fastify({
-    logger,
+    logger: {
+      level: config.logLevel,
+      ...(isProd
+        ? {}
+        : { transport: { target: 'pino-pretty', options: { colorize: true, translateTime: 'SYS:HH:MM:ss.l' } } }),
+    },
     bodyLimit: 10 * 1024 * 1024,
     trustProxy: true,
   });

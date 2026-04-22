@@ -114,11 +114,12 @@ export async function registerSpotifyRoutes(
     const api = await authedClient(ctx);
     try {
       // Spotify caps at 50/page; we fetch up to 100 to cover most users.
-      // Pass undefined for userId so the library defaults to the current user
-      // (derived from the access token's scope).
+      // The single-arg overload targets the current user (derived from the
+      // access token's scope) — using it instead of `(undefined, opts)` so
+      // the type checker picks the right overload.
       const [page1, page2] = await Promise.all([
-        api.getUserPlaylists(undefined, { limit: 50, offset: 0 }),
-        api.getUserPlaylists(undefined, { limit: 50, offset: 50 }),
+        api.getUserPlaylists({ limit: 50, offset: 0 }),
+        api.getUserPlaylists({ limit: 50, offset: 50 }),
       ]);
       const items = [...page1.body.items, ...page2.body.items];
       const data = {
@@ -210,7 +211,10 @@ export async function registerSpotifyRoutes(
         }
         case 'playlist': {
           const r = await api.getPlaylist(id, { fields: 'images' });
-          images = (r.body as { images?: typeof images }).images ?? null;
+          // `fields: 'images'` narrows the runtime payload but the static type
+          // is still SinglePlaylistResponse; route through `unknown` before
+          // re-casting to the narrow shape we actually receive.
+          images = (r.body as unknown as { images?: typeof images }).images ?? null;
           break;
         }
         case 'track': {
