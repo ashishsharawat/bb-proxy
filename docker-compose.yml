@@ -1,0 +1,14 @@
+# docker-compose.yml — for local dev. Coolify builds from the Dockerfile directly.
+services:
+  bb-proxy:
+    build: .
+    container_name: bb-proxy
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+    environment:
+      NODE_ENV: production

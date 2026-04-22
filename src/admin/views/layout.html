@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{TITLE}} — bb-proxy</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0; background: #f5f5f7; color: #1d1d1f;
+    }
+    header {
+      background: #1d1d1f; color: #fff; padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    header h1 { margin: 0; font-size: 16px; font-weight: 600; }
+    header nav a { color: #fff; text-decoration: none; margin-left: 16px; opacity: .7; }
+    header nav a:hover { opacity: 1; }
+    main { max-width: 960px; margin: 24px auto; padding: 0 20px; }
+    .card {
+      background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    .card h2 { margin-top: 0; font-size: 18px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; }
+    th { color: #6e6e73; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+    code { background: #f0f0f2; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+    .pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    .pill.up       { background: #d4edda; color: #155724; }
+    .pill.degraded { background: #fff3cd; color: #856404; }
+    .pill.down     { background: #f8d7da; color: #721c24; }
+    .pill.disabled { background: #e9ecef; color: #6c757d; }
+    button, .btn {
+      background: #0071e3; color: #fff; border: none; padding: 8px 14px;
+      border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;
+      text-decoration: none; display: inline-block;
+    }
+    button:hover, .btn:hover { background: #0077ed; }
+    .btn-secondary { background: #e8e8ed; color: #1d1d1f; }
+    .btn-danger { background: #ff3b30; color: #fff; }
+    input[type=text], input[type=password] {
+      padding: 8px 10px; border: 1px solid #d2d2d7; border-radius: 6px;
+      font-size: 14px; width: 100%; max-width: 320px;
+    }
+    .muted { color: #6e6e73; font-size: 12px; }
+    form { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>bb-proxy admin</h1>
+    <nav>
+      <a href="/admin">Dashboard</a>
+      <a href="/health" target="_blank">Health</a>
+    </nav>
+  </header>
+  <main>
+    {{CONTENT}}
+  </main>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<div class="card">
+  <h2>Modules</h2>
+  <table>
+    <thead>
+      <tr><th>Module</th><th>State</th><th>Detail</th></tr>
+    </thead>
+    <tbody>
+      {{MODULE_ROWS}}
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Devices</h2>
+  {{DEVICE_ROWS}}
+  <form method="POST" action="/admin/devices" style="margin-top: 16px;">
+    <input type="text" name="label" placeholder="Device label (e.g. 'My BB9900')" />
+    <button type="submit">Mint new token</button>
+  </form>
+  {{NEW_TOKEN_BANNER}}
+</div>
+
+<div class="card">
+  <h2>WhatsApp</h2>
+  <p class="muted">Scan the QR on your primary phone's <em>Linked Devices</em> screen to bridge your WhatsApp.</p>
+  <p><a class="btn" href="/whatsapp/qr" target="_blank">View pairing QR</a></p>
+</div>
+
+<div class="card">
+  <h2>Spotify</h2>
+  {{SPOTIFY_STATUS}}
+</div>
+
+<div class="card">
+  <h2>System</h2>
+  <p class="muted">Version: <code>{{VERSION}}</code> · Node: <code>{{NODE_VERSION}}</code> · Uptime: <code>{{UPTIME}}</code></p>
+</div>
